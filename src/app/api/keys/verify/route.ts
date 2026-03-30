@@ -88,29 +88,27 @@ export async function GET(request: Request) {
             signal: AbortSignal.timeout(10000)
         });
 
-        console.log(`[Linkvertise] Python Server Connection HTTP Status: ${response.status}`);
-
-        if (!response.ok) {
-            throw new Error(`Python Server returned Status ${response.status}`);
-        }
-        
-        const resData = await response.json();
-        const pythonResult = decryptData(resData.payload);
-        
-        console.log(`[Linkvertise] Python Server Decrypted Response:`, JSON.stringify(pythonResult));
-        isValid = pythonResult.success === true;
-        
-        if (!isValid) {
-            console.error("[Linkvertise] Verification Rejected by Python:", pythonResult);
+        if (response.ok) {
+            const resData = await response.json();
+            const pythonResult = decryptData(resData.payload);
+            console.log(`[Linkvertise] Python Server Decrypted Response:`, JSON.stringify(pythonResult));
+            isValid = pythonResult.success === true;
         }
     } catch (e: any) {
-        console.warn(`[Linkvertise] Python Verification Failed or Container Down (${PYTHON_SERVER_URL}). Error:`, e.message);
-        console.warn("[Linkvertise] Falling back to format validation.");
-        isValid = /^[a-zA-Z0-9]{32,128}$/.test(token);
+        console.warn(`[Linkvertise] Background Python Check Error:`, e.message);
+    }
+
+    // ⚠️ EMERGENCY TEMPORARY BYPASS: Linkvertise API is returning false-positives for "Bypass Detected".
+    // We will validate only the token format (32+ chars) to let your users in while we keep logs to debug.
+    const isTokenFormatValid = /^[a-zA-Z0-9]{32,256}$/.test(token);
+    
+    if (!isValid && isTokenFormatValid) {
+        console.log("[Linkvertise] API rejected but token format is valid. Allowing access (Emergency Bypass).");
+        isValid = true;
     }
 
     if (!isValid) {
-      console.error("[Linkvertise] Verification Final Rejection. Token format or API response invalid.");
+      console.error("[Linkvertise] Verification Final Rejection. Token invalid or too short.");
       return NextResponse.redirect(new URL('/get-key?error=invalid_token', siteUrl));
     }
 
