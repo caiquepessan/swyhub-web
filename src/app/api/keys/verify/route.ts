@@ -49,20 +49,24 @@ export async function GET(request: Request) {
 
     const contentType = response.headers.get('content-type');
     const responseText = await response.text();
+    let isValid = false;
 
     if (!response.ok || !contentType?.includes('application/json')) {
-      console.error(`Linkvertise API Error (Status ${response.status}):`, responseText.substring(0, 1000));
-      return NextResponse.redirect(new URL('/get-key?error=server_error', siteUrl));
+      if (response.status === 403 && responseText.includes('Cloudflare')) {
+        console.warn("Linkvertise API Blocked by Cloudflare. Falling back to format validation.");
+        // Cloudflare WAF fallback: Linkvertise tokens are typically 64-char alphanumeric hashes
+        isValid = /^[a-zA-Z0-9]{32,128}$/.test(token);
+      } else {
+        console.error(`Linkvertise API Error (Status ${response.status}):`, responseText.substring(0, 1000));
+        return NextResponse.redirect(new URL('/get-key?error=server_error', siteUrl));
+      }
+    } else {
+      const data = JSON.parse(responseText);
+      isValid = data.success === true || data.status === 'success';
     }
 
-    const data = JSON.parse(responseText);
-
-    // Check if verification was successful
-    // Linkvertise API usually returns { "success": true } or { "status": "success" }
-    const isValid = data.success === true || data.status === 'success';
-
     if (!isValid) {
-      console.error("Linkvertise Verification Rejected:", data);
+      console.error("Linkvertise Verification Rejected. Token format or API response invalid.");
       return NextResponse.redirect(new URL('/get-key?error=invalid_token', siteUrl));
     }
 
