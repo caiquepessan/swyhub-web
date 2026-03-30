@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
+import { FloatingHeader } from "@/components/ui/floating-header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +30,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body 
-        className="min-h-full flex flex-col relative overflow-x-hidden"
+        className="min-h-full flex flex-col relative overflow-x-hidden bg-black text-white"
         suppressHydrationWarning
       >
-        <Navbar />
-        <main className="flex-1 pt-24 pb-16 scroll-smooth">{children}</main>
+        <FloatingHeader />
+        <main className="flex-1 pb-16 scroll-smooth">{children}</main>
       </body>
     </html>
   );

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ShieldCheck, Zap, Code, ArrowRight } from "lucide-react";
+import { GradientDots } from "@/components/ui/gradient-dots";
+import { GlowCard } from "@/components/ui/spotlight-card";
 
 export default function Home() {
   const containerVariants = {
@@ -19,7 +21,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 w-full relative">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 w-full relative overflow-hidden">
+      <GradientDots duration={40} className="fixed inset-0 opacity-18 pointer-events-none -z-10" backgroundColor="#000000" />
       {/* Animated Subtle Background Glows */}
       <motion.div 
         animate={{ 
@@ -78,29 +81,41 @@ export default function Home() {
         transition={{ delay: 0.4, duration: 0.6 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 max-w-5xl w-full relative z-10"
       >
-        <div className="minimal-card p-6 flex flex-col gap-3 group hover:border-brand-purple/40 hover:shadow-[0_0_30px_rgba(126,34,206,0.05)] transition-all duration-500 ease-out hover:-translate-y-1">
+        <GlowCard 
+          glowColor="purple" 
+          customSize={true} 
+          className="p-6 flex flex-col gap-3 group border-white/5 transition-all duration-500 ease-out hover:-translate-y-1"
+        >
           <div className="w-10 h-10 rounded-md bg-[#111] border border-[#222] group-hover:border-brand-purple/30 group-hover:text-brand-purple-light transition-colors flex items-center justify-center text-white mb-2">
             <Zap className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors">Lightning Fast</h3>
-          <p className="text-sm text-white/50 leading-relaxed">Highly optimized codebase ensuring the absolute minimum impact on your game performance.</p>
-        </div>
+          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors relative z-10">Lightning Fast</h3>
+          <p className="text-sm text-white/50 leading-relaxed relative z-10">Highly optimized codebase ensuring the absolute minimum impact on your game performance.</p>
+        </GlowCard>
 
-        <div className="minimal-card p-6 flex flex-col gap-3 group hover:border-brand-purple/40 hover:shadow-[0_0_30px_rgba(126,34,206,0.05)] transition-all duration-500 ease-out hover:-translate-y-1">
+        <GlowCard 
+          glowColor="purple" 
+          customSize={true} 
+          className="p-6 flex flex-col gap-3 group border-white/5 transition-all duration-500 ease-out hover:-translate-y-1"
+        >
           <div className="w-10 h-10 rounded-md bg-[#111] border border-[#222] group-hover:border-brand-purple/30 group-hover:text-brand-purple-light transition-colors flex items-center justify-center text-white mb-2">
             <ShieldCheck className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors">Undetected & Safe</h3>
-          <p className="text-sm text-white/50 leading-relaxed">Built from the ground up focusing on strict anti-cheat bypass technologies and safety protocols.</p>
-        </div>
+          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors relative z-10">Undetected & Safe</h3>
+          <p className="text-sm text-white/50 leading-relaxed relative z-10">Built from the ground up focusing on strict anti-cheat bypass technologies and safety protocols.</p>
+        </GlowCard>
 
-        <div className="minimal-card p-6 flex flex-col gap-3 group hover:border-brand-purple/40 hover:shadow-[0_0_30px_rgba(126,34,206,0.05)] transition-all duration-500 ease-out hover:-translate-y-1">
+        <GlowCard 
+          glowColor="purple" 
+          customSize={true} 
+          className="p-6 flex flex-col gap-3 group border-white/5 transition-all duration-500 ease-out hover:-translate-y-1"
+        >
           <div className="w-10 h-10 rounded-md bg-[#111] border border-[#222] group-hover:border-brand-purple/30 group-hover:text-brand-purple-light transition-colors flex items-center justify-center text-white mb-2">
             <Code className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors">Universal Support</h3>
-          <p className="text-sm text-white/50 leading-relaxed">Built to seamlessly integrate with your favorite games. One execution, endless possibilities tailored per game.</p>
-        </div>
+          <h3 className="text-lg font-semibold text-white group-hover:text-brand-purple-light transition-colors relative z-10">Universal Support</h3>
+          <p className="text-sm text-white/50 leading-relaxed relative z-10">Built to seamlessly integrate with your favorite games. One execution, endless possibilities tailored per game.</p>
+        </GlowCard>
       </motion.div>
     </div>
   );
