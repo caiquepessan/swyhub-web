@@ -60,7 +60,10 @@ export async function GET(request: Request) {
     const PUBLISHER_ID = process.env.LINKVERTISE_PUBLISHER_ID || "1375696";
     const ANTI_BYPASS_TOKEN = (process.env.LINKVERTISE_ANTI_BYPASS_TOKEN || "").trim();
 
-    const PYTHON_SERVER_URL = process.env.PYTHON_KEY_SERVER_URL || "http://swyhub-key-server:8000";
+    let PYTHON_SERVER_URL = process.env.PYTHON_KEY_SERVER_URL || "http://swyhub-key-server:8000";
+    if (!PYTHON_SERVER_URL.startsWith('http')) {
+        PYTHON_SERVER_URL = `http://${PYTHON_SERVER_URL}`;
+    }
 
     const payload = encryptData({
         publisher_id: PUBLISHER_ID,
@@ -68,7 +71,7 @@ export async function GET(request: Request) {
         token: token
     });
 
-    console.log("Routing encrypted verification through Python Microservice...");
+    console.log(`[Linkvertise] Routing encrypted verification through Python Microservice at ${PYTHON_SERVER_URL}/verify...`);
     let isValid = false;
 
     try {
@@ -79,6 +82,8 @@ export async function GET(request: Request) {
             signal: AbortSignal.timeout(10000)
         });
 
+        console.log(`[Linkvertise] Python Server Connection HTTP Status: ${response.status}`);
+
         if (!response.ok) {
             throw new Error(`Python Server returned Status ${response.status}`);
         }
@@ -86,18 +91,20 @@ export async function GET(request: Request) {
         const resData = await response.json();
         const pythonResult = decryptData(resData.payload);
         
+        console.log(`[Linkvertise] Python Server Decrypted Response:`, JSON.stringify(pythonResult));
         isValid = pythonResult.success === true;
         
         if (!isValid) {
-            console.error("Linkvertise Verification Rejected by Python:", pythonResult);
+            console.error("[Linkvertise] Verification Rejected by Python:", pythonResult);
         }
     } catch (e: any) {
-        console.warn("Python Verification Failed or Container Down. Falling back to format validation. Error:", e.message);
+        console.warn(`[Linkvertise] Python Verification Failed or Container Down (${PYTHON_SERVER_URL}). Error:`, e.message);
+        console.warn("[Linkvertise] Falling back to format validation.");
         isValid = /^[a-zA-Z0-9]{32,128}$/.test(token);
     }
 
     if (!isValid) {
-      console.error("Linkvertise Verification Rejected. Token format or API response invalid.");
+      console.error("[Linkvertise] Verification Final Rejection. Token format or API response invalid.");
       return NextResponse.redirect(new URL('/get-key?error=invalid_token', siteUrl));
     }
 
@@ -111,7 +118,7 @@ export async function GET(request: Request) {
     // 3. Store in Supabase
     const { error: keyError } = await supabase.from('user_keys').upsert({
       user_id: user.id,
-      key_content: secureKey,
+      key: secureKey,
       expires_at: expiresAt.toISOString()
     }, { onConflict: 'user_id' });
 
