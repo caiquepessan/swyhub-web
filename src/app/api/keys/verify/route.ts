@@ -116,11 +116,15 @@ export async function GET(request: Request) {
     expiresAt.setHours(expiresAt.getHours() + 24);
 
     // 3. Store in Supabase
-    const { error: keyError } = await supabase.from('user_keys').upsert({
+    // Since user_id is not marked as UNIQUE in your database, upsert will fail with 42P10.
+    // Instead, we simply delete old keys and insert the new one.
+    await supabase.from('user_keys').delete().eq('user_id', user.id);
+    
+    const { error: keyError } = await supabase.from('user_keys').insert({
       user_id: user.id,
       key: secureKey,
       expires_at: expiresAt.toISOString()
-    }, { onConflict: 'user_id' });
+    });
 
     if (keyError) {
       console.error("Supabase Key Insert Error:", keyError);
