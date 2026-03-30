@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import crypto from 'crypto';
 
 // Setup AES-256-GCM encryption compatible with Python cryptography.hazmat AESGCM
-const PYTHON_SECRET = process.env.PYTHON_KEY_SECRET || "swyhub_secret_key_32_bytes_long!";
+const PYTHON_SECRET = process.env.PYTHON_KEY_SECRET || "2D443BDB247A10F6581464E4BF863D55";
 const aesKey = Buffer.alloc(32);
 aesKey.write(PYTHON_SECRET, 'utf8');
 
