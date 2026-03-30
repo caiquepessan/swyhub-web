@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { KeyRound, ShieldAlert, ArrowRight, Loader2 } from "lucide-react";
 
-export default function GetKey() {
+function GetKeyContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -109,5 +109,17 @@ export default function GetKey() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function GetKey() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-purple" />
+      </div>
+    }>
+      <GetKeyContent />
+    </Suspense>
   );
 }
