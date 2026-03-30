@@ -12,11 +12,10 @@ export async function POST(request: Request) {
     }
 
     const PUBLISHER_ID = process.env.LINKVERTISE_PUBLISHER_ID || "1375696";
-    const host = request.headers.get('host');
-    const protocol = host?.includes('localhost') ? 'http' : 'https';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${request.headers.get('host')}`;
     
     // The target URL where the user will be redirected to AFTER Linkvertise
-    const callbackUrl = `${protocol}://${host}/api/keys/verify`;
+    const callbackUrl = `${siteUrl.replace(/\/$/, '')}/api/keys/verify`;
     const encodedUrl = Buffer.from(callbackUrl).toString('base64');
 
     // Linkvertise Dynamic Link Formula
