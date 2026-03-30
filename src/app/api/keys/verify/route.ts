@@ -65,10 +65,16 @@ export async function GET(request: Request) {
         PYTHON_SERVER_URL = `http://${PYTHON_SERVER_URL}`;
     }
 
+    const userAgent = request.headers.get("user-agent") || "";
+    // Cloudflare/Coolify usually puts original IP here
+    const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("cf-connecting-ip") || request.headers.get("x-real-ip") || "127.0.0.1";
+
     const payload = encryptData({
         publisher_id: PUBLISHER_ID,
         anti_bypass_token: ANTI_BYPASS_TOKEN,
-        token: token
+        token: token,
+        user_agent: userAgent,
+        client_ip: clientIp.split(',')[0].trim()
     });
 
     console.log(`[Linkvertise] Routing encrypted verification through Python Microservice at ${PYTHON_SERVER_URL}/verify...`);
