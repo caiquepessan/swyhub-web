@@ -77,29 +77,38 @@ export async function GET(request: Request) {
         client_ip: clientIp.split(',')[0].trim()
     });
 
-    console.log(`[Linkvertise] Background validation starting for token: ${token.substring(0, 8)}...`);
-    
-    // 🔥 100% SUCCESS POLICY: If user reached this route with a hash, they did the work.
-    // We validate format and proceed immediately.
-    const isTokenFormatValid = /^[a-zA-Z0-9]{32,256}$/.test(token);
-    
-    if (!isTokenFormatValid) {
-        console.error("[Linkvertise] Rejected: Token format is essentially invalid.");
-        return NextResponse.redirect(new URL('/get-key?error=invalid_token', siteUrl));
+    console.log(`[Linkvertise] Routing encrypted verification through Python Microservice at ${PYTHON_SERVER_URL}/verify...`);
+    let isValid = false;
+
+    try {
+        const response = await fetch(`${PYTHON_SERVER_URL}/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ payload }),
+            signal: AbortSignal.timeout(15000)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Python Server connection failed with status ${response.status}`);
+        }
+
+        const resData = await response.json();
+        const pythonResult = decryptData(resData.payload);
+        console.log(`[Linkvertise] Python Server Decrypted Response:`, JSON.stringify(pythonResult));
+        
+        // STRICT CHECK: Approval MUST come from Python/Linkvertise
+        isValid = pythonResult.success === true;
+        
+        if (!isValid) {
+            console.error("[Linkvertise] Rejected: Linkvertise API returned success: false.");
+        }
+    } catch (e: any) {
+        console.error(`[Linkvertise] Critical Verification Error:`, e.message);
+        isValid = false; // Block access on server error
     }
 
-    // Call Python in background for analytics/logs, but don't wait for its judgement
-    fetch(`${PYTHON_SERVER_URL}/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ payload }),
-    }).catch(e => console.warn("[Linkvertise] BG Log Error:", e.message));
-
-    console.log("[Linkvertise] Token format verified. Granting 100% Access.");
-    let isValid = true;
-
     if (!isValid) {
-      console.error("[Linkvertise] Verification Final Rejection. Token invalid or too short.");
+      console.error("[Linkvertise] Verification Final Rejection. Strict approval required.");
       return NextResponse.redirect(new URL('/get-key?error=invalid_token', siteUrl));
     }
 
