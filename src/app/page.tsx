@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, Zap, Code, ArrowRight } from "lucide-react";
 import { GradientDots } from "@/components/ui/gradient-dots";
 import { GlowCard } from "@/components/ui/spotlight-card";
+import { ShinyButton } from "@/components/ui/shiny-button";
 
 export default function Home() {
   const containerVariants = {
@@ -62,9 +63,11 @@ export default function Home() {
 
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link href="/get-key" className="w-full sm:w-auto">
-            <button className="w-full px-6 py-3 rounded-xl font-semibold text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(126,34,206,0.2)] hover:shadow-[0_0_30px_rgba(126,34,206,0.4)] bg-brand-purple hover:bg-purple-600 flex justify-center items-center gap-2 text-sm border border-white/10">
-              Get Key <ArrowRight className="w-4 h-4" />
-            </button>
+            <ShinyButton className="w-full sm:w-auto !px-8 !py-4 !text-base !font-bold shadow-[0_0_20px_rgba(126,34,206,0.2)]">
+              <div className="flex items-center justify-center gap-2">
+                Get Key <ArrowRight className="w-4 h-4" />
+              </div>
+            </ShinyButton>
           </Link>
           
           <Link href="/discord" className="w-full sm:w-auto">

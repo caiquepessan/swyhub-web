@@ -1,125 +1,78 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { KeyRound, ShieldAlert, ArrowRight, Loader2 } from "lucide-react";
-
-function GetKeyContent() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const errorParam = searchParams.get('error');
-    if (errorParam) {
-      const errorMessages: Record<string, string> = {
-        'missing_token': 'Linkvertise token was not found. Please try again.',
-        'invalid_token': 'The verification token is invalid or expired. Bypass attempt detected.',
-        'database_error': 'Failed to save your key. Please contact support.',
-        'server_error': 'A server internal error occurred.',
-        'unauthorized': 'You must be logged in via Discord to generate a key.'
-      };
-      setError(errorMessages[errorParam] || 'An unknown error occurred.');
-    }
-  }, [searchParams]);
-
-  const handleProceed = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const res = await fetch('/api/keys/generate', {
-        method: 'POST',
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError(data.error || "Failed to generate link.");
-        setIsLoading(false);
-      }
-    } catch (err: any) {
-      setError("An unexpected error occurred.");
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 w-full">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-xl w-full"
-      >
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold mb-4 text-gradient-primary">Get Script Key</h1>
-          <p className="text-white/60">
-            Complete the steps below to securely generate your temporary 24-hour key.
-          </p>
-        </div>
-
-        <div className="glass-card p-8 flex flex-col gap-6">
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4">
-              {error}
-            </div>
-          )}
-
-          <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4">
-            <div className="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple-light shrink-0">
-              1
-            </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-lg">Step 1: Verification</h4>
-              <p className="text-sm text-white/50">Complete the Linkvertise checkpoint.</p>
-            </div>
-            <button 
-              onClick={handleProceed}
-              disabled={isLoading}
-              className="px-4 py-2 bg-brand-purple hover:bg-brand-purple-light text-white rounded-lg font-semibold transition-all flex items-center gap-2 text-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>Proceed <ArrowRight className="w-4 h-4" /></>
-              )}
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4 opacity-50 pointer-events-none">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/40 shrink-0">
-              2
-            </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-lg">Step 2: Generate Key</h4>
-              <p className="text-sm text-white/50">Redeem your checkpoint for a secure key.</p>
-            </div>
-            <KeyRound className="w-5 h-5 text-white/40 shrink-0 mr-4" />
-          </div>
-
-          <div className="mt-4 p-4 rounded-xl bg-purple-500/10 border border-brand-purple/20 flex gap-4">
-            <ShieldAlert className="w-6 h-6 text-brand-purple shrink-0" />
-            <p className="text-sm text-purple-200">
-              <strong>Anti-Bypass Active:</strong> Our system strictly verifies checkpoint completion. Usage of bypassers will automatically blacklist your IP and Hardware ID.
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+import { MessageSquare, KeyRound, ShieldCheck, ArrowRight, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { ShinyButton } from "@/components/ui/shiny-button";
 
 export default function GetKey() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-brand-purple" />
-      </div>
-    }>
-      <GetKeyContent />
-    </Suspense>
+    <div className="flex flex-col items-center justify-center min-h-[75vh] px-4 w-full relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-purple/5 blur-[120px] rounded-full pointer-events-none -z-10" />
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-2xl w-full text-center"
+      >
+        <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-purple/10 border border-brand-purple/20 text-brand-purple-light text-sm font-bold tracking-wide">
+          <KeyRound className="w-4 h-4" />
+          KEY SYSTEM UPDATE
+        </div>
+
+        <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+          How to get your <span className="text-gradient-primary">SwyHub Key</span>
+        </h1>
+        
+        <p className="text-lg text-white/50 mb-12 max-w-lg mx-auto leading-relaxed">
+          We've moved our key generation to Discord for a faster and more secure experience. Direct generation on the website has been discontinued.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 text-left">
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="p-6 border border-white/5 rounded-2xl bg-white/[0.02] flex flex-col gap-4 relative overflow-hidden group shadow-xl"
+          >
+            <div className="absolute top-0 left-0 w-1 h-full bg-brand-purple/40" />
+            <div className="w-10 h-10 rounded-xl bg-brand-purple/10 flex items-center justify-center text-brand-purple-light">
+              <MessageSquare className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-1">1. Join Discord</h3>
+              <p className="text-sm text-white/40">Enter our community server to access the key features.</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="p-6 border border-white/5 rounded-2xl bg-white/[0.02] flex flex-col gap-4 relative overflow-hidden group shadow-xl"
+          >
+            <div className="absolute top-0 left-0 w-1 h-full bg-green-500/40" />
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-1">2. Run Command</h3>
+              <p className="text-sm text-white/40">Use the <code className="text-green-400 font-mono">/key</code> command in the bot channel.</p>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/discord" className="w-full sm:w-auto">
+            <ShinyButton className="w-full sm:w-auto !px-8 !py-4 !text-base !font-bold shadow-[0_0_30px_rgba(126,34,206,0.2)]">
+              <div className="flex items-center justify-center gap-2">
+                Join Discord Server <ExternalLink className="w-4 h-4" />
+              </div>
+            </ShinyButton>
+          </Link>
+        </div>
+
+        <p className="mt-12 text-[10px] uppercase tracking-[0.2em] text-white/20 font-bold">
+          SwyHub Security & Performance First
+        </p>
+      </motion.div>
+    </div>
   );
 }

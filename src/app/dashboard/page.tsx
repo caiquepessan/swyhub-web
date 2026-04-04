@@ -76,7 +76,7 @@ export default async function DashboardPage() {
             ) : (
               <div className="p-10 text-center text-white/20 border-2 border-dashed border-white/5 rounded-xl bg-white/[0.01]">
                 <p className="text-sm">No active session found.</p>
-                <p className="text-[10px] mt-1 font-mono">Bypass the key system to see your key here.</p>
+                <p className="text-[10px] mt-1 font-mono">Use the <code className="text-brand-purple-light">/key</code> command on Discord to get yours.</p>
               </div>
             )}
           </div>
