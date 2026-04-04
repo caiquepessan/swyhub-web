@@ -18,7 +18,6 @@ export function FloatingHeader() {
 
 	const links = [
 		{ label: 'Home', href: '/' },
-		{ label: 'Get Key', href: '/get-key' },
 		{ label: 'Discord', href: '/discord' },
 		{ label: 'Terms', href: '/terms' },
 		{ label: 'Privacy', href: '/privacy' },
@@ -34,7 +33,7 @@ export function FloatingHeader() {
 		>
 			<nav className="mx-auto flex items-center justify-between p-2 px-4">
 				<Link href="/" className="flex items-center gap-2 group transition-all hover:opacity-80">
-					<img src="/SwyHub-ico.ico" alt="SwyHub Logo" className="w-8 h-8 object-contain" />
+					<img src="/logo.svg" alt="SwyHub Logo" className="w-12 h-12 object-contain" />
 					<p className="font-bold text-lg tracking-tight text-white">SwyHub</p>
 				</Link>
 

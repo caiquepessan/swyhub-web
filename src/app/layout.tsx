@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingHeader } from "@/components/ui/floating-header";
 import { Footer } from "@/components/ui/footer-section";
+import { PortalTransition } from "@/components/ui/portal-transition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SwyHub - Free Roblox Script Hub | Premium Solutions",
   description: "Secure, reliable, and powerful script execution for Roblox.",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -39,6 +43,7 @@ export default function RootLayout({
         className="min-h-full flex flex-col relative overflow-x-hidden bg-black text-white"
         suppressHydrationWarning
       >
+        <PortalTransition />
         <FloatingHeader />
         <main className="flex-1 pb-16 scroll-smooth">{children}</main>
         <Footer />

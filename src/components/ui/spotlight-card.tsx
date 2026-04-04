@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, ReactNode } from 'react';
+import React, { useEffect, useRef, useState, ReactNode } from 'react';
 
 interface GlowCardProps {
   children: ReactNode;
@@ -36,13 +36,20 @@ const GlowCard: React.FC<GlowCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
+  const [isHoverDevice, setIsHoverDevice] = useState(true);
+
   useEffect(() => {
+    // Detect if the device supports hover (PC) or is a touch-only device (Mobile)
+    const mediaQuery = window.matchMedia('(hover: hover)');
+    setIsHoverDevice(mediaQuery.matches);
+
+    if (!mediaQuery.matches) return;
+
     const syncPointer = (e: PointerEvent) => {
       const { clientX: x, clientY: y } = e;
       
       if (cardRef.current) {
         const bounds = cardRef.current.getBoundingClientRect();
-        // Calculate relative coordinates for the spotlight to work correctly within the card
         cardRef.current.style.setProperty('--x', (x - bounds.left).toFixed(2));
         cardRef.current.style.setProperty('--xp', ((x - bounds.left) / bounds.width).toFixed(2));
         cardRef.current.style.setProperty('--y', (y - bounds.top).toFixed(2));
@@ -66,13 +73,19 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
   const getInlineStyles = () => {
     const baseStyles: React.CSSProperties & Record<string, any> = {
+      // Default values for static glow on mobile
+      '--x': '50',
+      '--y': '0',
+      '--xp': '0.5',
+      '--yp': '0',
+      
       '--base': base,
       '--spread': spread,
       '--radius': '14',
       '--border': '1',
       '--backdrop': 'rgba(10, 10, 10, 0.5)',
       '--backup-border': 'rgba(255, 255, 255, 0.1)',
-      '--size': '250',
+      '--size': isHoverDevice ? '250' : '500', // Larger size on mobile for better visibility
       '--outer': '1',
       '--border-size': 'calc(var(--border, 1) * 1px)',
       '--spotlight-size': 'calc(var(--size, 250) * 1px)',
@@ -86,10 +99,8 @@ const GlowCard: React.FC<GlowCardProps> = ({
       backgroundColor: 'var(--backdrop, transparent)',
       backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
       backgroundPosition: '50% 50%',
-      // backgroundAttachment: 'fixed', // Removing fixed to make it relative to card
       border: 'var(--border-size) solid var(--backup-border)',
       position: 'relative',
-      touchAction: 'none',
     };
 
     // Add width and height if provided

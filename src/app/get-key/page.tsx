@@ -73,7 +73,7 @@ export default function GetKey() {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold mb-4">Standard Key</h3>
+              <h3 className="text-xl font-bold mb-4">Free Key</h3>
               <ul className="space-y-3">
                 {freeFeatures.map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm text-white/50">
@@ -96,49 +96,78 @@ export default function GetKey() {
           </GlowCard>
 
           {/* Premium Access Card */}
-          <GlowCard 
-            glowColor="purple" 
-            customSize={true} 
-            className="p-8 flex flex-col gap-6 relative group border-brand-purple/20 bg-brand-purple/5 hover:-translate-y-2 transition-all duration-500 overflow-visible shadow-[0_0_40px_rgba(126,34,206,0.1)]"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              scale: [1.02, 1.03, 1.02],
+            }}
+            transition={{
+              scale: {
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              },
+              opacity: { duration: 0.5 },
+              y: { duration: 0.5 }
+            }}
+            className="relative"
           >
-            <div className="absolute -top-4 -right-4 px-4 py-1 rounded-full bg-brand-purple text-white text-[10px] font-black uppercase tracking-widest shadow-xl rotate-3">
-              Most Popular
-            </div>
+            <GlowCard 
+              glowColor="purple" 
+              customSize={true} 
+              className="p-8 flex flex-col gap-6 relative group border-brand-purple/40 bg-brand-purple/10 hover:-translate-y-2 transition-all duration-500 overflow-visible shadow-[0_0_60px_rgba(168,85,247,0.2)]"
+            >
+              <motion.div 
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [3, 5, 3]
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -right-4 px-4 py-1.5 rounded-full bg-brand-purple text-white text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(168,85,247,0.5)] z-20"
+              >
+                Most Popular
+              </motion.div>
 
-            <div className="flex justify-between items-start">
-              <div className="w-12 h-12 rounded-2xl bg-brand-purple/20 border border-brand-purple/30 flex items-center justify-center text-brand-purple-light shadow-lg">
-                <Crown className="w-6 h-6" />
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-12 rounded-2xl bg-brand-purple/30 border border-brand-purple/40 flex items-center justify-center text-brand-purple-light shadow-xl">
+                  <Crown className="w-6 h-6 animate-pulse" />
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-bold text-brand-purple-light uppercase tracking-wider">Premium Access</span>
+                  <p className="text-3xl font-black text-white">$4.99<span className="text-sm text-white/40 font-medium">/mo</span></p>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="text-sm font-bold text-brand-purple-light uppercase tracking-wider">Premium Access</span>
-                <p className="text-3xl font-black text-white">$4.99<span className="text-sm text-white/40 font-medium">/mo</span></p>
-              </div>
-            </div>
 
-            <div>
-              <h3 className="text-xl font-bold mb-4">Elite Key</h3>
-              <ul className="space-y-3">
-                {premiumFeatures.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm text-white/80 font-medium">
-                    <div className="shrink-0 w-5 h-5 rounded-full bg-brand-purple text-white flex items-center justify-center shadow-lg shadow-brand-purple/40">
-                      <Zap className="w-3 h-3 fill-current" />
+              <div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  Premium Key
+                  <Zap className="w-4 h-4 text-brand-purple-light fill-current" />
+                </h3>
+                <ul className="space-y-3">
+                  {premiumFeatures.map((feature) => (
+                    <li key={feature} className="flex items-center gap-3 text-sm text-white/90 font-medium group/item">
+                      <div className="shrink-0 w-5 h-5 rounded-full bg-brand-purple text-white flex items-center justify-center shadow-lg shadow-brand-purple/40 group-hover/item:scale-110 transition-transform">
+                        <Zap className="w-3 h-3 fill-current" />
+                      </div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-auto pt-6 border-t border-brand-purple/20">
+                <Link href="https://swyhub.mysellauth.com/product/swyhub-premium" target="_blank">
+                  <ShinyButton className="w-full !py-4 !rounded-xl !text-base !font-black !shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:scale-[1.02] transition-transform">
+                    <div className="flex items-center justify-center gap-2">
+                      Buy Premium <Crown className="w-4 h-4" />
                     </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mt-auto pt-6 border-t border-brand-purple/10">
-              <Link href="https://swyhub.mysellauth.com/product/swyhub-premium" target="_blank">
-                <ShinyButton className="w-full !py-4 !rounded-xl !text-base !font-black !shadow-2xl">
-                  <div className="flex items-center justify-center gap-2">
-                    Buy Premium <Crown className="w-4 h-4" />
-                  </div>
-                </ShinyButton>
-              </Link>
-            </div>
-          </GlowCard>
+                  </ShinyButton>
+                </Link>
+              </div>
+            </GlowCard>
+          </motion.div>
         </div>
 
         <div className="mt-20 flex flex-col items-center gap-4">

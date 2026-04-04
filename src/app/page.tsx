@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 w-full relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 pt-32 md:pt-0 w-full relative overflow-hidden">
       <GradientDots duration={40} className="fixed inset-0 opacity-18 pointer-events-none -z-10" backgroundColor="#000000" />
       {/* Animated Subtle Background Glows */}
       <motion.div 
